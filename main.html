@@ -37,6 +37,43 @@
   const stopButton = document.querySelector('#stop');
 
   //Your code goes here
+	 // Function to populate the voices dropdown
+  function populateVoices() {
+    voices = this.getVoices();
+    voicesDropdown.innerHTML = voices
+      .map(voice => `<option value="${voice.name}">${voice.name} (${voice.lang})</option>`)
+      .join('');
+  }
+
+  // Function to set the selected voice
+  function setVoice() {
+    msg.voice = voices.find(voice => voice.name === this.value);
+    toggle();
+  }
+
+  // Function to toggle speaking by stopping and restarting
+  function toggle(startOver = true) {
+    speechSynthesis.cancel();
+    if (startOver) {
+      speechSynthesis.speak(msg);
+    }
+  }
+
+  // Function to set the options like rate and pitch
+  function setOption() {
+    msg[this.name] = this.value;
+    toggle();
+  }
+
+  // Event listeners
+  speechSynthesis.addEventListener('voiceschanged', populateVoices);
+  voicesDropdown.addEventListener('change', setVoice);
+  options.forEach(option => option.addEventListener('change', setOption));
+  speakButton.addEventListener('click', toggle);
+  stopButton.addEventListener('click', () => toggle(false));
+
+  // Initialize the message with default text
+  msg.text = document.querySelector('[name="text"]').value;
 </script>
 
 </body>
